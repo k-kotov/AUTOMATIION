@@ -1,0 +1,2 @@
+mitmproxy-windows==0.10.7
+pydivert==2.1.0
