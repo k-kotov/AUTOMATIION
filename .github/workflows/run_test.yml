@@ -19,32 +19,25 @@ jobs:
     steps:
       - name: Copy source code
         uses: actions/checkout@v4
-
       - name: Set up Python env
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
-
       # Удаляем любые .whl (в т.ч. lxml-5.3.0-cp312-win_amd64.whl)
       - name: Remove bundled wheel files
         run: find . -type f -name "*.whl" -delete || true
-
       # Депсы для сборки lxml на Linux
       - name: Install system deps
         run: sudo apt-get update && sudo apt-get install -y build-essential libxml2-dev libxslt-dev python3-dev
-
       # ВАЖНО — сначала собрать lxml (так pip точно не возьмёт Windows wheel)
       - name: Install lxml from source
-        run: pip install --no-binary=:all: lxml==5.1.0
-
+        run: pip install --no-binary=:all:lxml==5.1.0
       # Теперь основной requirements (Windows-пакеты будут пропущены)
       - name: Install dependencies
         run: pip install -r requirements.txt
-
       # Если вдруг раннер будет Windows — ставим дополнительные
       - name: Install Windows extras (only on Windows)
         if: runner.os == 'Windows'
         run: pip install -r requirements.windows.txt
-
       - name: Run tests
         run: pytest -v
